@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateContactDto {
   @ApiProperty({ example: 'John Doe' })
@@ -26,4 +26,9 @@ export class CreateContactDto {
   @IsOptional()
   @IsString()
   notes?: string;
+
+  @ApiPropertyOptional({ example: 'https://example.com/photo.jpg' })
+  @IsOptional()
+  @IsUrl()
+  photoUrl?: string;
 }
