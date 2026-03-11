@@ -7,21 +7,26 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { AuthGuard } from './guards/auth.guard.js';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiOperation({ summary: 'Register a new user' })
   @Post('register')
   async register(@Body() dto: RegisterDto) {
+    console.log('Registering user:', dto);
     return this.authService.register(dto.email, dto.password);
   }
 
+  @ApiOperation({ summary: 'Login and receive auth cookie' })
   @Post('login')
   async login(
     @Body() dto: LoginDto,
@@ -42,6 +47,8 @@ export class AuthController {
     return user;
   }
 
+  @ApiOperation({ summary: 'Logout and clear auth cookie' })
+  @ApiCookieAuth()
   @Post('logout')
   @UseGuards(AuthGuard)
   logout(@Res({ passthrough: true }) res: Response) {
@@ -53,6 +60,8 @@ export class AuthController {
     return { message: 'Logged out successfully' };
   }
 
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiCookieAuth()
   @Get('me')
   @UseGuards(AuthGuard)
   async me(@Req() req: Request) {

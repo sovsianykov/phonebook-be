@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module.js';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
@@ -7,6 +8,10 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  });
   app.setGlobalPrefix('api/v1');
   app.use(cookieParser());
   app.useGlobalPipes(
@@ -17,6 +22,15 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  const config = new DocumentBuilder()
+    .setTitle('Phonebook API')
+    .setDescription('Phonebook/Contact Manager REST API')
+    .setVersion('1.0')
+    .addCookieAuth('token')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
 
   await app.listen(process.env.PORT ?? 8080);
 }
