@@ -8,15 +8,10 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter.js';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const options = {
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
+  app.enableCors({
+    origin: true,
     credentials: true,
-  };
-
-  app.enableCors(options);
+  });
 
   app.setGlobalPrefix('api/v1');
   app.use(cookieParser());
@@ -41,3 +36,5 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 8080);
 }
 void bootstrap();
+
+
