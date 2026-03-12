@@ -2,7 +2,7 @@ services:
   - type: web
     name: phonebook-be
     runtime: node
-    buildCommand: npm install && npm run build
+    buildCommand: npm install && NODE_OPTIONS=--max-old-space-size=512 npm run build
     startCommand: npm run start:prod
     envVars:
       - key: DATABASE_URL
