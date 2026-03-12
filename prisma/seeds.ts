@@ -37,7 +37,9 @@ async function main() {
       name: faker.person.fullName(),
       phone: faker.phone.number(),
       email: faker.datatype.boolean(0.7) ? faker.internet.email() : null,
-      address: faker.datatype.boolean(0.5) ? faker.location.streetAddress(true) : null,
+      address: faker.datatype.boolean(0.5)
+        ? faker.location.streetAddress(true)
+        : null,
       notes: faker.datatype.boolean(0.3) ? faker.lorem.sentence() : null,
       photoUrl: faker.datatype.boolean(0.4)
         ? `https://picsum.photos/seed/${faker.string.alphanumeric(8)}/200`
