@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: phonebook-be
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_EXPIRATION
+        value: 1d
+      - key: PORT
+        value: 8080
+      - key: ADMIN_EMAIL
+        sync: false
