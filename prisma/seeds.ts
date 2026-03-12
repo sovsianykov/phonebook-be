@@ -10,7 +10,7 @@ const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 const USERS_COUNT = 10;
-const CONTACTS_COUNT = 1000;
+const CONTACTS_COUNT = 100;
 const PASSWORD_HASH = await bcrypt.hash('password123', 10);
 
 async function main() {
