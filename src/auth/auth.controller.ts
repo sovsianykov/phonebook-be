@@ -1,8 +1,14 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  ParseIntPipe,
   Post,
+  Put,
   Req,
   Res,
   UseGuards,
@@ -13,6 +19,8 @@ import { AuthService } from './auth.service.js';
 import { RegisterDto } from './dto/register.dto.js';
 import { LoginDto } from './dto/login.dto.js';
 import { AuthGuard } from './guards/auth.guard.js';
+import { AdminGuard } from './guards/admin.guard.js';
+import { UpdateDto } from './dto/update.dto.js';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -22,7 +30,6 @@ export class AuthController {
   @ApiOperation({ summary: 'Register a new user' })
   @Post('register')
   async register(@Body() dto: RegisterDto) {
-    console.log('Registering user:', dto);
     return this.authService.register(dto.email, dto.password);
   }
 
@@ -67,5 +74,34 @@ export class AuthController {
   async me(@Req() req: Request) {
     const user = req['user'] as { sub: number };
     return this.authService.getProfile(user.sub);
+  }
+
+  @ApiOperation({ summary: 'Delete a user (admin only)' })
+  @ApiCookieAuth()
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard, AdminGuard)
+  async deleteProfile(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.authService.deleteProfile(id);
+  }
+
+  @ApiOperation({ summary: 'Update current user profile' })
+  @ApiCookieAuth()
+  @Put('me')
+  @UseGuards(AuthGuard)
+  async updateProfile(
+    @Req() req: Request,
+    @Body() dto: UpdateDto,
+  ): Promise<void> {
+    const user = req['user'] as { sub: number };
+    await this.authService.updateProfile(user.sub, dto);
+  }
+
+  @ApiOperation({ summary: 'Get all users (admin only)' })
+  @ApiCookieAuth()
+  @Get('')
+  @UseGuards(AuthGuard, AdminGuard)
+  async getAllUsers() {
+    return this.authService.getAllUsers();
   }
 }
